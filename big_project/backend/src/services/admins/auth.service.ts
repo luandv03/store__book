@@ -3,28 +3,29 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { query } from "../../db/index.db";
-import { IAdmin } from "../../types/admins/admins.type";
-import { IRegisterAccount } from "../../types/admins/register-account.type";
-import { ILoginAccount } from "../../types/admins/login-account.type";
 import { IToken } from "../../types/admins/login-account.type";
 import { ConfigService } from "../../configs/configService.config";
 import { createToken } from "../../utils/create_token.util";
 import { ResponseType } from "../../types/response.type";
 
+interface IAdmin {
+    admin_id: number;
+    username: string;
+    password: string;
+    role: string;
+}
+
+interface ILogin {
+    username: string;
+    password: string;
+}
+
 const configService = new ConfigService();
 
 class AdminService {
-    async getAdmins(): Promise<IAdmin[]> {
-        const result: QueryResult<any> = await query(
-            `SELECT admin_id, username, phone_number, role FROM admins`
-        );
-
-        return result.rows;
-    }
-
-    async loginAccount(account: ILoginAccount): Promise<IToken | any> {
+    async loginAccount(account: ILogin): Promise<IToken | any> {
         try {
-            const { username, password }: ILoginAccount = account;
+            const { username, password }: ILogin = account;
 
             const result: QueryResult<any> = await query(
                 `SELECT * FROM admins WHERE username = $1`,
@@ -51,13 +52,11 @@ class AdminService {
                 };
             }
 
-            const access_token = createToken<{
+            const access_token_admin = createToken<{
                 admin_id: string;
-                role: string;
             }>(
                 {
                     admin_id: result.rows[0]?.admin_id,
-                    role: result.rows[0]?.role,
                 },
                 configService.getSecretKeyAccessToken(),
                 {
@@ -65,10 +64,9 @@ class AdminService {
                 }
             );
 
-            const refresh_token = createToken(
+            const refresh_token_admin = createToken(
                 {
                     admin_id: result.rows[0]?.admin_id,
-                    role: result.rows[0]?.role,
                 },
                 configService.getSecretKeyRefreshToken(),
                 {
@@ -80,8 +78,8 @@ class AdminService {
                 statusCode: 200,
                 message: "Login successfull",
                 data: {
-                    access_token,
-                    refresh_token,
+                    access_token_admin,
+                    refresh_token_admin,
                     EXPIRES_ACCESS_TOKEN:
                         configService.getExpiresInAccessToken(),
                     EXPIRES_REFRESH_TOKEN:
@@ -93,33 +91,23 @@ class AdminService {
         }
     }
 
-    async registerAccount(
-        account: IRegisterAccount
-    ): Promise<ResponseType<any>> {
-        const { username, password, phone_number, role } = account;
-
+    async getProfileAdmin(user_id: number): Promise<ResponseType<any>> {
         const results = await query(
-            `SELECT * FROM admins WHERE username = $1`,
-            [username]
+            `SELECT admin_id, username FROM admins WHERE admin_id = $1`,
+            [user_id]
         );
 
-        if (results.rows[0]) {
+        if (!results.rows.length) {
             return {
-                statusCode: 406,
-                message: "Username already exist",
+                statusCode: 404,
+                message: "Admin not exist",
             };
         }
 
-        const hashPassword: string = await bcrypt.hash(password, 10);
-
-        await query(
-            `INSERT INTO admins(username, password, phone_number, role) VALUES ($1, $2, $3, $4) `,
-            [username, hashPassword, phone_number, role]
-        );
-
         return {
-            statusCode: 201,
-            message: "You have registed successfully",
+            statusCode: 200,
+            message: "Get Profile Successfull",
+            data: results.rows[0],
         };
     }
 
@@ -136,7 +124,10 @@ class AdminService {
             };
         }
 
-        const access_token = createToken<{ admin_id: string; role: string }>(
+        const access_token_admin = createToken<{
+            admin_id: string;
+            role: string;
+        }>(
             {
                 admin_id: decoded.admin_id,
                 role: decoded.role,
@@ -151,7 +142,7 @@ class AdminService {
             statusCode: 201,
             message: "refesh token successfull",
             data: {
-                access_token,
+                access_token_admin,
                 EXPIRES_ACCESS_TOKEN: configService.getExpiresInAccessToken(),
             },
         };

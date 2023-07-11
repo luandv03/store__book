@@ -1,38 +1,32 @@
 import { Router } from "express";
 const adminRoutes: Router = Router();
 
-import { authMiddleware } from "../../../middlewares/auth.middleware";
-import { authorizeMiddleware } from "../../../middlewares/authorization.middleware";
+import { authMiddlewareAdmin } from "../../../middlewares/auth.middleware-admin";
 import { AdminController } from "../../../controllers/admins/admin.controller";
 const adminController: AdminController = new AdminController();
-
-// get all admins accounts
-adminRoutes.get(
-    "/admin/account/view",
-    authMiddleware,
-    authorizeMiddleware,
-    adminController.getAdmins
-);
-
-// register account
-adminRoutes.post(
-    "/admin/account/register",
-    authMiddleware,
-    authorizeMiddleware,
-    adminController.register
-);
 
 //login account
 adminRoutes.post("/admin/account/login", adminController.login);
 
 //refresh token account
-adminRoutes.get("/admin/account/refresh_token", adminController.refreshToken);
+adminRoutes.get(
+    "/admin/account/refresh_token",
+    authMiddlewareAdmin,
+    adminController.refreshToken
+);
 
 //logout
 adminRoutes.post(
     "/admin/account/logout",
-    authMiddleware,
+    authMiddlewareAdmin,
     adminController.logout
+);
+
+// get profile admin
+adminRoutes.get(
+    "/admin/account/get_profile",
+    authMiddlewareAdmin,
+    adminController.getProfile
 );
 
 export default adminRoutes;

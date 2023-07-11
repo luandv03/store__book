@@ -1,181 +1,82 @@
-import { useState } from "react";
-import {
-    createStyles,
-    Table,
-    Checkbox,
-    ScrollArea,
-    Flex,
-    Box,
-    Stack,
-    NavLink,
-    rem,
-    ActionIcon,
-    Modal,
-    Input,
-    Button,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconPlus, IconPencil } from "@tabler/icons-react";
+import { useState, useEffect } from "react";
+import { Table, ScrollArea, Stack } from "@mantine/core";
 
-const useStyles = createStyles((theme) => ({
-    rowSelected: {
-        backgroundColor:
-            theme.colorScheme === "dark"
-                ? theme.fn.rgba(theme.colors[theme.primaryColor][7], 0.2)
-                : theme.colors[theme.primaryColor][0],
-    },
-}));
+import { novelService } from "../../services/novel.service";
 
-interface TableSelectionProps {
-    category_id: number;
-    category_name: string;
+interface NovelType {
+    novel_id: number;
+    trans_id: number;
+    novel_view: number;
+    author: string;
+    composed_year: number;
+    novel_name: string;
+    total_chapters?: number;
+    avg_star?: number;
+    novel_photo_url: string;
+    novel_description: string;
+    username?: string;
 }
-
-const data: TableSelectionProps[] = [
-    {
-        category_id: 1,
-        category_name: "Nước hoa Nam",
-    },
-    {
-        category_id: 2,
-        category_name: "Nước hoa Nữ",
-    },
-    {
-        category_id: 3,
-        category_name: "Nước hoa Unisex",
-    },
-];
-
 export function CategoryList() {
-    const { classes, cx } = useStyles();
-    const [selection, setSelection] = useState([1]);
-    const [opened, { open, close }] = useDisclosure(false);
-    const [category, setCategory] = useState({
-        category_id: 0,
-        category_name: "",
-    });
-    const [categorySelected, setCategorySelected] = useState("");
+    const [novels, setNovels] = useState([
+        {
+            novel_id: 0,
+            trans_id: 0,
+            novel_view: 0,
+            author: "",
+            composed_year: 0,
+            novel_name: "",
+            total_chapters: 0,
+            avg_star: 0,
+            username: 0,
+        },
+    ]);
 
-    const [activeSave, setActiveSave] = useState(false);
+    const handleGetNovel = async () => {
+        const resNovel = await novelService.getAllNovel();
 
-    const toggleRow = (id: number) =>
-        setSelection((current) =>
-            current.includes(id)
-                ? current.filter((item) => item !== id)
-                : [...current, id]
-        );
-    const toggleAll = () =>
-        setSelection((current) =>
-            current.length === data.length
-                ? []
-                : data.map((item) => item.category_id)
-        );
+        if (resNovel.statusCode === 200) {
+            setNovels(resNovel.data);
+        }
+    };
 
-    const rows = data.map((item) => {
-        const selected = selection.includes(item.category_id);
-        return (
-            <tr
-                key={item.category_id}
-                className={cx({ [classes.rowSelected]: selected })}
-            >
-                <td>
-                    <Checkbox
-                        checked={selection.includes(item.category_id)}
-                        onChange={() => toggleRow(item.category_id)}
-                        transitionDuration={0}
-                    />
-                </td>
-                <td>{item.category_id}</td>
-                <td>{item.category_name}</td>
-                <td>
-                    <ActionIcon
-                        onClick={() => {
-                            open();
-                            setCategory(item);
-                            setCategorySelected(item.category_name);
-                        }}
-                        color="black"
-                    >
-                        <IconPencil />
-                    </ActionIcon>
-                </td>
-            </tr>
-        );
-    });
+    useEffect(() => {
+        handleGetNovel();
+    }, []);
+
+    const rows =
+        novels.length > 0 &&
+        novels.map((item: NovelType) => {
+            return (
+                <tr key={item.novel_id}>
+                    <td>{item.novel_id}</td>
+                    <td>{item.novel_name}</td>
+                    <td>{item.total_chapters}</td>
+                    <td>{item.avg_star}</td>
+                    <td>{item.composed_year}</td>
+                    <td>{item.trans_id}</td>
+                    <td>{item.username}</td>
+                </tr>
+            );
+        });
 
     return (
         <ScrollArea>
             <Stack>
-                <Flex justify="flex-end" style={{ width: "100%" }}>
-                    <Box>
-                        <NavLink
-                            label="CREATE"
-                            icon={<IconPlus size="1.4rem" />}
-                            component="a"
-                            href="/category/create"
-                            sx={{
-                                color: "blue",
-                                fontWeight: "500",
-                            }}
-                        />
-                    </Box>
-                </Flex>
-
                 <Table miw={800} verticalSpacing="sm" withColumnBorders>
                     <thead>
                         <tr>
-                            <th style={{ width: rem(40) }}>
-                                <Checkbox
-                                    onChange={toggleAll}
-                                    checked={selection.length === data.length}
-                                    indeterminate={
-                                        selection.length > 0 &&
-                                        selection.length !== data.length
-                                    }
-                                    transitionDuration={0}
-                                />
-                            </th>
-                            <th>ID</th>
-                            <th>Tên danh mục</th>
+                            <th>Mã truyện</th>
+                            <th>Tên truyện</th>
+                            <th>Số chương</th>
+                            <th>Số sao trung bình</th>
+                            <th>Năm phát hành</th>
+                            <th>Mã người dịch</th>
+                            <th>Tên người dịch</th>
                         </tr>
                     </thead>
                     <tbody>{rows}</tbody>
                 </Table>
             </Stack>
-            <Modal
-                opened={opened}
-                onClose={() => {
-                    close();
-                    setActiveSave(false);
-                }}
-                title="Edit category"
-            >
-                <Stack>
-                    <Input
-                        value={category.category_name}
-                        onChange={(e) => {
-                            setActiveSave(
-                                categorySelected !== e.target.value
-                                    ? true
-                                    : false
-                            );
-                            setCategory({
-                                category_id: category.category_id,
-                                category_name: e.target.value,
-                            });
-                        }}
-                    />
-
-                    <Flex justify="flex-end">
-                        <Button
-                            onClick={() => console.log(category)}
-                            disabled={!activeSave}
-                        >
-                            Save
-                        </Button>
-                    </Flex>
-                </Stack>
-            </Modal>
         </ScrollArea>
     );
 }

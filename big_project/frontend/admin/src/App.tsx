@@ -1,11 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-// import { TableSelection } from "./components/Table";
-import Order from "./components/Order/Order.component";
-import Dashboard from "./components/Dashboard/Dashboard.component";
 import LayoutApp from "./pages/layout.page";
 import { ProductDetail } from "./components/Product/ProductDetail.component";
-import { ProductList } from "./components/Product/ProductList.component";
-import Post from "./components/Post/Post.component";
 import Product from "./components/Product/Product.component";
 import { ProductFeedback } from "./components/Product/ProductFeedback.component";
 import { ProductCreate } from "./components/Product/ProductCreate.component";
@@ -15,165 +10,137 @@ import { ProductView } from "./components/Product/ProductView.component";
 import Customer from "./components/Customer/Customer.component";
 import { CustomerList } from "./components/Customer/CustomerList.component";
 import { CategoryList } from "./components/Category/CategoryList.component";
-import { CategoryCreate } from "./components/Category/CategoryCreate.component";
 import Category from "./components/Category/Category.component";
+import { TopNovel } from "./components/website/TopNovel/TopNovel";
+import { SearchPage } from "./components/website/SearchPage/SearchPage";
+import { RegisterNovel } from "./components/website/RegisterNovel/RegisterNovel";
+import { NovelDetail } from "./components/website/NovelDetail/NovelDetail";
+import { NovelList } from "./components/website/NovelList/NoverList";
+import { CreateChapter } from "./components/website/CreateChapter/CreateChapter";
+import { CreateNovel } from "./components/website/CreateNovel/CreateNovel";
+import { ChapterContent } from "./components/website/ChapterContent/ChapterContent";
+import { NovelByGenre } from "./components/website/NovelByGenre/NovelByGenre";
+import { AuthApp, Login, Register } from "./components/Auth";
+import { ProtectedRoute } from "./providers/ProtectedRoute/ProtectedRoute";
+import WebsiteLayout from "./pages/website.page";
+import { NotFound } from "./components/website/NotFound/NotFound";
+import AdminProvider from "./providers/AdminProvider/AdminProvider";
+import { Profile } from "./components/website/Profile/Profile";
+import { ProtectedAdmin } from "./providers/ProtectedAdmin/ProtectedAdmin";
 
 function App() {
-    const data = [
-        {
-            product_id: "200",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GEi8ov-n2sxU_8KvipBQ34AAlCe9xIhskwo-dhQ&s",
-            title: "Nuoc hoa Michelin",
-            brand: "Gucci",
-            year_publish: 2019,
-            volume: 100,
-            price: 2000000,
-            discount: 10,
-            quantity: 20,
-        },
-        {
-            product_id: "201",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GEi8ov-n2sxU_8KvipBQ34AAlCe9xIhskwo-dhQ&s",
-            title: "Nuoc hoa Michelin",
-            brand: "Gucci",
-            year_publish: 2019,
-            volume: 100,
-            price: 2000000,
-            discount: 10,
-            quantity: 20,
-        },
-        {
-            product_id: "202",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GEi8ov-n2sxU_8KvipBQ34AAlCe9xIhskwo-dhQ&s",
-            title: "Nuoc hoa Michelin ",
-            brand: "Gucci",
-            year_publish: 2019,
-            volume: 100,
-            price: 2000000,
-            discount: 10,
-            quantity: 20,
-        },
-        {
-            product_id: "203",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GEi8ov-n2sxU_8KvipBQ34AAlCe9xIhskwo-dhQ&s",
-            title: "Nuoc hoa Michelin ",
-            brand: "Gucci",
-            year_publish: 2019,
-            volume: 100,
-            price: 2000000,
-            discount: 10,
-            quantity: 20,
-        },
-        {
-            product_id: "204",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GEi8ov-n2sxU_8KvipBQ34AAlCe9xIhskwo-dhQ&s",
-            title: "Nuoc hoa Michelin ",
-            brand: "Gucci",
-            year_publish: 2019,
-            volume: 100,
-            price: 2000000,
-            discount: 10,
-            quantity: 20,
-        },
-        {
-            product_id: "205",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GEi8ov-n2sxU_8KvipBQ34AAlCe9xIhskwo-dhQ&s",
-            title: "Nuoc hoa Michelin ",
-            brand: "Gucci",
-            year_publish: 2019,
-            volume: 100,
-            price: 2000000,
-            discount: 10,
-            quantity: 20,
-        },
-        {
-            product_id: "206",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GEi8ov-n2sxU_8KvipBQ34AAlCe9xIhskwo-dhQ&s",
-            title: "Nuoc hoa Michelin ",
-            brand: "Gucci",
-            year_publish: 2019,
-            volume: 100,
-            price: 2000000,
-            discount: 10,
-            quantity: 20,
-        },
-        {
-            product_id: "207",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GEi8ov-n2sxU_8KvipBQ34AAlCe9xIhskwo-dhQ&s",
-            title: "Nuoc hoa Michelin ",
-            brand: "Gucci",
-            year_publish: 2019,
-            volume: 100,
-            price: 2000000,
-            discount: 10,
-            quantity: 20,
-        },
-        {
-            product_id: "208",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GEi8ov-n2sxU_8KvipBQ34AAlCe9xIhskwo-dhQ&s",
-            title: "Nuoc hoa Michelin ",
-            brand: "Gucci",
-            year_publish: 2019,
-            volume: 100,
-            price: 2000000,
-            discount: 10,
-            quantity: 20,
-        },
-    ];
-
     return (
         <>
             <Routes>
-                <Route path="/" element={<LayoutApp />}>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/category" element={<Category />}>
-                        <Route path="/category" element={<CategoryList />} />
+                <Route path="/" element={<WebsiteLayout />}>
+                    <Route path="/" element={<TopNovel />} />
+                    <Route path="/auth" element={<AuthApp />}>
+                        <Route path="/auth/login" element={<Login />} />
+                        <Route path="/auth/register" element={<Register />} />
+                    </Route>
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/novel/view" element={<SearchPage />} />
+
+                    <Route
+                        path="/upload-novel"
+                        element={
+                            <ProtectedRoute>
+                                <RegisterNovel />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/novel/:novel_id/detail"
+                        element={<NovelDetail />}
+                    />
+                    <Route path="/category" element={<NovelList />} />
+
+                    <Route
+                        path="/novel/:novel_id/add_chapter"
+                        element={
+                            <ProtectedRoute>
+                                <CreateChapter />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/novel/create/:trans_id"
+                        element={
+                            <ProtectedRoute>
+                                <CreateNovel />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/novel/view/genre/:genre_id"
+                        element={<NovelByGenre />}
+                    />
+                </Route>
+                <Route
+                    path="/novel/:novel_id/chapter/:chapter"
+                    element={<ChapterContent />}
+                />
+
+                <Route
+                    path="/dashboard/"
+                    element={
+                        <AdminProvider>
+                            <LayoutApp />
+                        </AdminProvider>
+                    }
+                >
+                    <Route path="/dashboard/novel" element={<Category />}>
                         <Route
-                            path="/category/create"
-                            element={<CategoryCreate />}
+                            path="/dashboard/novel"
+                            element={
+                                <ProtectedAdmin>
+                                    <CategoryList />
+                                </ProtectedAdmin>
+                            }
                         />
                     </Route>
 
-                    <Route path="/product" element={<Product />}>
+                    <Route path="/dashboard/product" element={<Product />}>
+                        <Route path="/dashboard/product" />
                         <Route
-                            path="/product"
-                            element={<ProductList data={data} />}
-                        />
-                        <Route
-                            path="/product/:product_id"
+                            path="/dashboard/product/:product_id"
                             element={<ProductView />}
                         >
                             <Route
-                                path="/product/:product_id/image"
+                                path="/dashboard/product/:product_id/image"
                                 element={<ProductImage />}
                             />
                             <Route
-                                path="/product/:product_id/detail"
+                                path="/dashboard/product/:product_id/detail"
                                 element={<ProductDetail />}
                             />
                             <Route
-                                path="/product/:product_id/description"
+                                path="/dashboard/product/:product_id/description"
                                 element={<ProductDes />}
                             />
                             <Route
-                                path="/product/:product_id/feedback"
+                                path="/dashboard/product/:product_id/feedback"
                                 element={<ProductFeedback />}
                             />
                         </Route>
                         <Route
-                            path="/product/create"
+                            path="/dashboard/product/create"
                             element={<ProductCreate />}
                         />
                     </Route>
-                    <Route path="order" element={<Order />} />
-                    <Route path="post" element={<Post />}></Route>
-                    <Route path="/customer" element={<Customer />}>
+                    <Route path="/dashboard/translator" element={<Customer />}>
                         <Route
-                            path="/customer"
-                            element={<CustomerList />}
+                            path="/dashboard/translator"
+                            element={
+                                <ProtectedAdmin>
+                                    <CustomerList />
+                                </ProtectedAdmin>
+                            }
                         ></Route>
                     </Route>
                 </Route>
+
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </>
     );

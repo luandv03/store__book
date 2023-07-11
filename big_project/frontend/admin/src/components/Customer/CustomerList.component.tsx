@@ -11,72 +11,65 @@ import {
 } from "@mantine/core";
 import { IconDownload, IconEye } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { SearchBar } from "../SearchBar/SearchBar.component";
+import { useEffect } from "react";
+import { authService } from "../../services/auth.service";
 
-interface CustomerType {
-    customer_id: number;
-    fullname: string;
-    phone_number: string;
+interface TransType {
+    user_id: number;
+    mail: string;
     address: string;
-    email: string;
-    dob: string;
+    username: string;
+    phone_number: string;
+    birth_year: number;
 }
 
-const data: CustomerType[] = [
-    {
-        customer_id: 1,
-        fullname: "Dinh Van Luan",
-        phone_number: "0867801606",
-        address: "Ha Nam",
-        email: "luan@gmail.com",
-        dob: "28/08/2003",
-    },
-    {
-        customer_id: 1,
-        fullname: "Dinh Van Luan",
-        phone_number: "0867801606",
-        address: "Ha Nam",
-        email: "luan@gmail.com",
-        dob: "28/08/2003",
-    },
-    {
-        customer_id: 1,
-        fullname: "Dinh Van Luan",
-        phone_number: "0867801606",
-        address: "Ha Nam",
-        email: "luan@gmail.com",
-        dob: "28/08/2003",
-    },
-    {
-        customer_id: 1,
-        fullname: "Dinh Van Luan",
-        phone_number: "0867801606",
-        address: "Ha Nam",
-        email: "luan@gmail.com",
-        dob: "28/08/2003",
-    },
-];
-
 export function CustomerList() {
-    const rows = data.map((item: CustomerType) => {
-        return (
-            <tr key={item.customer_id}>
-                <td>{item.customer_id}</td>
-                <td>{item.fullname}</td>
-                <td>{item.email}</td>
-                <td>{item.address}</td>
-                <td>{item.phone_number}</td>
-                <td>{item.dob}</td>
-                <td>
-                    <Link to={`/product/${item.customer_id}`}>
-                        <ActionIcon>
-                            <IconEye />
-                        </ActionIcon>
-                    </Link>
-                </td>
-            </tr>
-        );
-    });
+    const [trans, setTrans] = useState<TransType[]>([
+        {
+            user_id: 0,
+            phone_number: "",
+            address: "",
+            mail: "",
+            username: "",
+            birth_year: 0,
+        },
+    ]);
+
+    const handleGetTrans = async () => {
+        const resTrans = await authService.getTrans();
+
+        if (resTrans.statusCode === 200) {
+            setTrans(resTrans.data);
+        }
+    };
+
+    useEffect(() => {
+        handleGetTrans();
+    }, []);
+
+    const rows =
+        trans.length > 0 &&
+        trans.map((item: TransType) => {
+            return (
+                <tr key={item.user_id}>
+                    <td>{item.user_id}</td>
+                    <td>{item.username}</td>
+                    <td>{item.mail}</td>
+                    <td>{item.address && "unknown"}</td>
+                    <td>{item.phone_number && "unknown"}</td>
+                    <td>{item.birth_year}</td>
+                    <td>
+                        <Link to={`/product/${item.user_id}`}>
+                            <ActionIcon>
+                                <IconEye />
+                            </ActionIcon>
+                        </Link>
+                    </td>
+                </tr>
+            );
+        });
 
     return (
         <Stack>
@@ -97,15 +90,7 @@ export function CustomerList() {
                     </Group>
 
                     <Group>
-                        <NativeSelect
-                            data={[
-                                "Tất cả",
-                                "Đã mua hàng",
-                                "Chưa mua hàng",
-                                "Khách quen",
-                            ]}
-                            withAsterisk
-                        />
+                        <NativeSelect data={["Tất cả"]} withAsterisk />
 
                         <Box>
                             <NavLink
@@ -124,12 +109,12 @@ export function CustomerList() {
             <Table miw={800} verticalSpacing="sm" striped>
                 <thead>
                     <tr>
-                        <th>Mã khách hàng</th>
+                        <th>Trans_id</th>
                         <th>Họ và tên</th>
-                        <th>Email</th>
+                        <th>Mail</th>
                         <th>Địa chỉ</th>
                         <th>Số điện thoại</th>
-                        <th>Ngày sinh</th>
+                        <th>Năm sinh</th>
                     </tr>
                 </thead>
                 <tbody>{rows}</tbody>

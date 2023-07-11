@@ -1,6 +1,8 @@
 export interface IRegisterAccount {
     username: string;
+    mail: string;
     password: string;
     phone_number: string;
-    role: string;
+    address: string;
+    birth_year: string;
 }

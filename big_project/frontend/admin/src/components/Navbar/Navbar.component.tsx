@@ -1,14 +1,6 @@
 import { createStyles, Navbar, getStylesRef, rem } from "@mantine/core";
 import {
     IconBellRinging,
-    IconFingerprint,
-    IconKey,
-    IconSettings,
-    Icon2fa,
-    IconDatabaseImport,
-    IconReceipt2,
-    IconSwitchHorizontal,
-    IconLogout,
     IconLayoutDashboard,
     IconUsers,
 } from "@tabler/icons-react";
@@ -93,15 +85,13 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const data = [
-    { link: "/", label: "Dashboard", icon: IconLayoutDashboard },
-    { link: "/category", label: "Category", icon: IconBellRinging },
-    { link: "/product", label: "Product", icon: IconReceipt2 },
-    { link: "/order", label: "Orders", icon: IconFingerprint },
-    { link: "/post", label: "Posts", icon: IconKey },
-    { link: "/feedback", label: "Feedbacks", icon: IconDatabaseImport },
-    { link: "/customer", label: "Customers", icon: IconUsers },
-    { link: "/admin", label: "Admins", icon: Icon2fa },
-    { link: "", label: "Other Settings", icon: IconSettings },
+    { link: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard },
+    { link: "/dashboard/novel", label: "Novel", icon: IconBellRinging },
+    {
+        link: "/dashboard/translator",
+        label: "Translator",
+        icon: IconUsers,
+    },
 ];
 
 export function NavbarApp() {
@@ -109,10 +99,8 @@ export function NavbarApp() {
 
     const location = useLocation();
 
-    console.log(location);
-
-    const links = data.map((item) => (
-        <Link to={item.link} style={{ textDecoration: "none" }}>
+    const links = data.map((item, index) => (
+        <Link to={item.link} style={{ textDecoration: "none" }} key={index}>
             <div
                 className={cx(classes.link, {
                     [classes.linkActive]: item.link === location.pathname,
@@ -128,29 +116,6 @@ export function NavbarApp() {
     return (
         <Navbar height={700} width={{ sm: 300 }} p="md">
             <Navbar.Section grow>{links}</Navbar.Section>
-
-            <Navbar.Section className={classes.footer}>
-                <a
-                    href="#"
-                    className={classes.link}
-                    onClick={(event) => event.preventDefault()}
-                >
-                    <IconSwitchHorizontal
-                        className={classes.linkIcon}
-                        stroke={1.5}
-                    />
-                    <span>Change account</span>
-                </a>
-
-                <a
-                    href="#"
-                    className={classes.link}
-                    onClick={(event) => event.preventDefault()}
-                >
-                    <IconLogout className={classes.linkIcon} stroke={1.5} />
-                    <span>Logout</span>
-                </a>
-            </Navbar.Section>
         </Navbar>
     );
 }
